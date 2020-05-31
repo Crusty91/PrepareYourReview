@@ -1,0 +1,43 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: replacetokens@3
+  inputs:
+    rootDirectory: 'terraform'
+    targetFiles: '**/variables.tf'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'fail'
+    keepToken: false
+    tokenPrefix: '#{'
+    tokenSuffix: '}#'
+    useLegacyPattern: false
+    enableTelemetry: true
+- task: TerraformInstaller@0
+  inputs:
+    terraformVersion: '0.12.26'
+- task: TerraformTaskV1@0
+  displayName: 'Init Terraform'
+  inputs:
+    provider: 'aws'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+    backendServiceAWS: $(backendServiceAWS)
+    backendAWSBucketName: $(backendbucket)
+    backendAWSKey: $(backendkey)
+- task: TerraformTaskV1@0
+  displayName: 'Apply Terraform'
+  inputs:
+    provider: 'aws'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+    environmentServiceNameAWS: $(backendServiceAWS)
