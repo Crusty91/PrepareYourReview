@@ -20,11 +20,19 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "cloudfront origin access identity"
 }
 
+data "template_file" "bucket_policy" {
+  template = "${file("bucket_policy.json")}"
+  vars {
+    origin_access_identity_arn = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+    bucket = "${aws_s3_bucket.www_site.arn}"
+  }
+}
+
 resource "aws_s3_bucket" "www_site" {
   bucket = var.site_name
   
   logging {
-    target_bucket = "${aws_s3_bucket.logs.bucket}"
+    target_bucket = aws_s3_bucket.logs.bucket
     target_prefix = "www.${var.site_name}/"
   }
 
