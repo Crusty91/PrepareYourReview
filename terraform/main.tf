@@ -20,14 +20,6 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "cloudfront origin access identity"
 }
 
-data "template_file" "bucket_policy" {
-  template = "${file("bucket_policy.json")}"
-  vars {
-    origin_access_identity_arn = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
-    bucket = "${aws_s3_bucket.www_site.arn}"
-  }
-}
-
 resource "aws_s3_bucket" "www_site" {
   bucket = var.site_name
   
@@ -36,24 +28,10 @@ resource "aws_s3_bucket" "www_site" {
     target_prefix = "www.${var.site_name}/"
   }
 
-  policy = <<EOF
-{
-  "Version": "2008-10-17",
-  "Statement": [
-    {
-      "Sid": "OnlyCloudfrontReadAccess",
-      "Principal": {
-        "AWS": "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
-      },
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject"
-      ],
-      "Resource": "arn:aws:s3:::${var.site_name}/*"
-    }
-  ]
-}
-EOF
+  policy = templatefile("bucket_policy.json", {
+    origin_access_identity_arn = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    bucket = aws_s3_bucket.www_site.arn
+  })
 
   website {
     index_document = "index.html"
@@ -72,7 +50,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
     domain_name = "www.${var.site_name}.s3.${var.region}.amazonaws.com"
 
     s3_origin_config {
-      origin_access_identity = "${aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path}"
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
     }
   }
 
