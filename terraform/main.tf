@@ -29,7 +29,7 @@ resource "aws_s3_bucket" "www_site" {
   }
 
   policy = templatefile("bucket_policy.json", {
-    origin_access_identity_arn = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    origin_access_identity_arn = aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn
     bucket = var.site_name
   })
 
