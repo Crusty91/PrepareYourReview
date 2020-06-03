@@ -41,7 +41,7 @@ resource "aws_s3_bucket" "www_site" {
       "Action": [
         "s3:GetObject"
       ],
-      "Resource": "arn:aws:s3:::${var.website_bucket_name}/*"
+      "Resource": "arn:aws:s3:::${var.site_name}/*"
     }
   ]
 }
