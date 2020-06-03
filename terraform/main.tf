@@ -71,10 +71,6 @@ data "aws_iam_policy_document" "s3_policy" {
 resource "aws_s3_bucket_policy" "www_site_policy" {
   bucket = aws_s3_bucket.www_site.id
   policy = data.aws_iam_policy_document.s3_policy.json
-
-  tags = {
-    project = var.project
-  }
 }
 
 
@@ -82,11 +78,11 @@ resource "aws_cloudfront_distribution" "website_cdn" {
   enabled      = true
   price_class  = "PriceClass_200"
   http_version = "http1.1"
-  aliases = ["www.${var.site_name}"]
+  aliases = [var.site_name]
 
   origin {
     origin_id   = "origin-bucket-${aws_s3_bucket.www_site.id}"
-    domain_name = "www.${var.site_name}.s3.${var.region}.amazonaws.com"
+    domain_name = "${var.site_name}.s3.${var.region}.amazonaws.com"
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
