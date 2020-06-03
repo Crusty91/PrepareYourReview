@@ -22,10 +22,6 @@ resource "aws_s3_bucket" "logs" {
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
   comment = "cloudfront origin access identity"
-
-  tags = {
-    project = var.project
-  }
 }
 
 resource "aws_s3_bucket" "www_site" {
