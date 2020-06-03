@@ -1,3 +1,5 @@
+[![Build Status](https://sbarbot.visualstudio.com/PrepareYourReview/_apis/build/status/Crusty91.PrepareYourReview?branchName=master)](https://sbarbot.visualstudio.com/PrepareYourReview/_build/latest?definitionId=28&branchName=master)
+
 # Introduction 
 TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
 
