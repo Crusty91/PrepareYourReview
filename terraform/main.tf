@@ -74,7 +74,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
   enabled      = true
   price_class  = "PriceClass_200"
   http_version = "http1.1"
-  aliases = [var.site_name]
+  aliases = ["www.${var.site_name}"]
 
   origin {
     origin_id   = "origin-bucket-${aws_s3_bucket.www_site.id}"
@@ -118,6 +118,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
   viewer_certificate {
     acm_certificate_arn      = var.certificate_arn
     ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2018"
   }
 
   tags = {
