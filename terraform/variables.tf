@@ -1,3 +1,7 @@
+variable "project" {
+  default = "#{project}#"
+}
+
 variable "region" {
   default = "#{region}#"
 }
