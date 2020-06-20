@@ -18,7 +18,7 @@ steps:
 - task: replacetokens@3
   inputs:
     rootDirectory: 'terraform'
-    targetFiles: '**/variables.tf'
+    targetFiles: '**/*.tf'
     encoding: 'auto'
     writeBOM: true
     actionOnMissing: 'fail'

@@ -4,9 +4,9 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = var.backendbucket
-    key    = var.backendkey
-    region = var.backendregion
+    bucket = "#{backendbucket}#"
+    key    = "#{backendkey}#"
+    region = "#{backendregion}#"
   }
 }
 
