@@ -23,25 +23,25 @@ pool:
 steps:
 - task: SecretsManagerGetSecret@1
   inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
+    awsCredentials: $(awsConnection)
     regionName: $(region)
     secretIdOrName: 'PrepareYourReview_Project'
     variableName: 'project'
 - task: SecretsManagerGetSecret@1
   inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
+    awsCredentials: $(awsConnection)
     regionName: $(region)
     secretIdOrName: 'PrepareYourReview_CartificateARN'
     variableName: 'certificate_arn'
 - task: SecretsManagerGetSecret@1
   inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
+    awsCredentials: $(awsConnection)
     regionName: $(region)
     secretIdOrName: 'Common_BackEndBucket'
     variableName: 'backendbucket'
 - task: SecretsManagerGetSecret@1
   inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
+    awsCredentials: $(awsConnection)
     regionName: $(region)
     secretIdOrName: 'Common_BackEndRegion'
     variableName: 'backendregion'
