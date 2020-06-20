@@ -1,15 +1,15 @@
 variable "project" {
-  default = "#{project}#"
+  default = "#{Project}#"
 }
 PrepareYourReview_Project
 variable "region" {
-  default = "#{region}#"
+  default = "#{Region}#"
 }
 
 variable "site_name" {
-  default = "#{project}#"
+  default = "#{Project}#"
 }
 
 variable "certificate_arn" {
-  default = "#{certificate_arn}#"
+  default = "#{CertificateArn}#"
 }
