@@ -11,10 +11,40 @@ trigger:
     include:
       - terraform/*
 
+variables:
+  - name: region
+    value: 'ca-central-1'
+  - name: awsConnection
+    value: 'sbarbot on barbots (aws)'
+
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: SecretsManagerGetSecret@1
+  inputs:
+    awsCredentials: $('sbarbot on barbots (aws)')
+    regionName: $(region)
+    secretIdOrName: 'PrepareYourReview_Project'
+    variableName: 'project'
+- task: SecretsManagerGetSecret@1
+  inputs:
+    awsCredentials: $('sbarbot on barbots (aws)')
+    regionName: $(region)
+    secretIdOrName: 'PrepareYourReview_CartificateARN'
+    variableName: 'certificate_arn'
+- task: SecretsManagerGetSecret@1
+  inputs:
+    awsCredentials: $('sbarbot on barbots (aws)')
+    regionName: $(region)
+    secretIdOrName: 'Common_BackEndBucket'
+    variableName: 'backendbucket'
+- task: SecretsManagerGetSecret@1
+  inputs:
+    awsCredentials: $('sbarbot on barbots (aws)')
+    regionName: $(region)
+    secretIdOrName: 'Common_BackEndRegion'
+    variableName: 'backendregion'
 - task: replacetokens@3
   inputs:
     rootDirectory: 'terraform'

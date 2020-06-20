@@ -5,8 +5,8 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "#{backendbucket}#"
-    key    = "#{backendkey}#"
-    region = "#{backendregion}#"
+    key    = "#{project}#.tfstate"
+    region = "#{backenregionregion}#"
   }
 }
 
