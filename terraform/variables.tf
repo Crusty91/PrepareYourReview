@@ -1,7 +1,7 @@
 variable "project" {
   default = "#{Project}#"
 }
-PrepareYourReview_Project
+
 variable "region" {
   default = "#{Region}#"
 }
