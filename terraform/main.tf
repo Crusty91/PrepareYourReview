@@ -4,9 +4,9 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket = "#{CommonTerraformBackEndBucket}#"
+    bucket = "#{/Common/Terraform/BackEnd/Bucket}#"
     key    = "#{Project}#.tfstate"
-    region = "#{CommonTerraformBackEndRegion}#"
+    region = "#{/Common/Terraform/BackEnd/Region}#"
   }
 }
 
