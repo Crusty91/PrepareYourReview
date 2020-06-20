@@ -12,7 +12,7 @@ trigger:
       - terraform/*
 
 variables:
-  - name: region
+  - name: Region
     value: 'ca-central-1'
   - name: awsConnection
     value: 'sbarbot on barbots (aws)'
@@ -21,30 +21,21 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: SecretsManagerGetSecret@1
+- task: SystemsManagerGetParameter@1
   inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
-    regionName: $(region)
-    secretIdOrName: 'PrepareYourReview_Project'
-    variableName: 'project'
-- task: SecretsManagerGetSecret@1
+    awsCredentials: '$(awsConnection)'
+    regionName: '$(Region)'
+    readMode: 'hierarchy'
+    parameterPath: '/Common/'
+    recursive: true
+- task: SystemsManagerGetParameter@1
   inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
-    regionName: $(region)
-    secretIdOrName: 'PrepareYourReview_CartificateARN'
-    variableName: 'certificate_arn'
-- task: SecretsManagerGetSecret@1
-  inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
-    regionName: $(region)
-    secretIdOrName: 'Common_BackEndBucket'
-    variableName: 'backendbucket'
-- task: SecretsManagerGetSecret@1
-  inputs:
-    awsCredentials: $('sbarbot on barbots (aws)')
-    regionName: $(region)
-    secretIdOrName: 'Common_BackEndRegion'
-    variableName: 'backendregion'
+    awsCredentials: $(awsConnection)
+    regionName: $(Region)
+    readMode: 'hierarchy'
+    parameterPath: '/PrepareYourReview/'
+    recursive: true
+    hierarchyNameTransform: 'leaf'
 - task: replacetokens@3
   inputs:
     rootDirectory: 'terraform'
