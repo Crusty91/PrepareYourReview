@@ -154,7 +154,7 @@ resource "aws_cognito_user_pool" "userpool" {
   }
 
   # MFA & VERIFICATIONS
-  mfa_configuration        = "ON"
+  mfa_configuration        = "OFF"
   auto_verified_attributes = ["email"]
 
   # MESSAGE CUSTOMIZATIONS
