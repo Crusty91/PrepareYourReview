@@ -183,7 +183,7 @@ resource "aws_cognito_user_pool" "userpool" {
 resource "aws_cognito_user_pool_domain" "userpool" {
   user_pool_id = aws_cognito_user_pool.userpool.id
   # DOMAIN PREFIX
-  domain = "${var.project}-91240"
+  domain = "${replace(var.project, ".", "-")}-91240"
 }
 
 resource "aws_cognito_user_pool_client" "userpool" {
