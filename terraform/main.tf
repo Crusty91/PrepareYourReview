@@ -10,6 +10,8 @@ terraform {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 # Setup Static Website (S3)
 resource "aws_s3_bucket" "logs" {
   bucket = "${var.site_name}-site-logs"
@@ -179,13 +181,13 @@ resource "aws_cognito_user_pool" "userpool" {
 
 # DOMAIN NAME
 resource "aws_cognito_user_pool_domain" "userpool" {
-  user_pool_id = "${aws_cognito_user_pool.userpool.id}"
+  user_pool_id = aws_cognito_user_pool.userpool.id
   # DOMAIN PREFIX
   domain = "${var.project}-91240"
 }
 
 resource "aws_cognito_user_pool_client" "userpool" {
-  user_pool_id = "${aws_cognito_user_pool.userpool.id}"
+  user_pool_id = aws_cognito_user_pool.userpool.id
 
   # APP CLIENTS
   name                   = "${var.project}-client"
@@ -315,14 +317,14 @@ resource "aws_api_gateway_rest_api" "apig" {
 }
 
 resource "aws_api_gateway_resource" "apig_resource" {
-  rest_api_id = "${aws_api_gateway_rest_api.apig.id}"
-  parent_id   = "${aws_api_gateway_rest_api.apig.root_resource_id}"
+  rest_api_id = aws_api_gateway_rest_api.apig.id
+  parent_id   = aws_api_gateway_rest_api.apig.root_resource_id
   path_part   = "prepareyourreview"
 }
 
 resource "aws_api_gateway_method" "apig_method" {
-  rest_api_id   = "${aws_api_gateway_rest_api.apig.id}"
-  resource_id   = "${aws_api_gateway_resource.apig_resource.id}"
+  rest_api_id   = aws_api_gateway_rest_api.apig.id
+  resource_id   = aws_api_gateway_resource.apig_resource.id
   http_method   = "POST"
   authorization = "AWS_IAM"
 
@@ -332,11 +334,11 @@ resource "aws_api_gateway_method" "apig_method" {
 }
 
 resource "aws_api_gateway_integration" "apig_method-integration" {
-  rest_api_id             = "${aws_api_gateway_rest_api.apig.id}"
-  resource_id             = "${aws_api_gateway_resource.apig_resource.id}"
-  http_method             = "${aws_api_gateway_method.apig_method.http_method}"
+  rest_api_id             = aws_api_gateway_rest_api.apig.id
+  resource_id             = aws_api_gateway_resource.apig_resource.id
+  http_method             = aws_api_gateway_method.apig_method.http_method
   type                    = "AWS_PROXY"
-  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${var.account_id}:function:${aws_lambda_function.example_test_function.function_name}/invocations"
+  uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${var.region}:${data.aws_caller_identity.current.account_id}:function:${aws_lambda_function.example_test_function.function_name}/invocations"
   integration_http_method = "POST"
 }
 
@@ -345,7 +347,7 @@ resource "aws_api_gateway_deployment" "example_deployment_dev" {
     aws_api_gateway_method.apig_method,
     aws_api_gateway_integration.apig_method-integration
   ]
-  rest_api_id = "${aws_api_gateway_rest_api.apig.id}"
+  rest_api_id = aws_api_gateway_rest_api.apig.id
   stage_name  = "dev"
 }
 
@@ -360,12 +362,12 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_lambda_function" "example_test_function" {
-  filename         = "${data.archive_file.lambda.output_path}"
+  filename         = data.archive_file.lambda.output_path
   function_name    = "${var.project}-lambda-test"
-  role             = "${aws_iam_role.example_api_role.arn}"
+  role             = aws_iam_role.example_api_role.arn
   handler          = "index.handler"
   runtime          = "nodejs10.x"
-  source_code_hash = "${filebase64sha256("${data.archive_file.lambda.output_path}")}"
+  source_code_hash = filebase64sha256(data.archive_file.lambda.output_path)
   publish          = true
 }
 
@@ -394,8 +396,8 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.example_test_function.function_name}"
+  function_name = aws_lambda_function.example_test_function.function_name
   principal     = "apigateway.amazonaws.com"
 
-   source_arn = "arn:aws:execute-api:${var.region}:${var.account_id}:${aws_api_gateway_rest_api.example_api.id}/*/${aws_api_gateway_method.example_api_method.http_method}${aws_api_gateway_resource.example_api_resource.path}"
+   source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.example_api.id}/*/${aws_api_gateway_method.example_api_method.http_method}${aws_api_gateway_resource.example_api_resource.path}"
 }
