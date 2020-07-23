@@ -203,7 +203,7 @@ resource "aws_cognito_user_pool_client" "userpool" {
 }
 
 resource "aws_cognito_identity_pool" "identitypool" {
-  identity_pool_name               = var.project
+  identity_pool_name               = replace(var.project, ".", "-")
   allow_unauthenticated_identities = false
   cognito_identity_providers {
     client_id               = aws_cognito_user_pool_client.userpool.id
@@ -363,7 +363,7 @@ data "archive_file" "lambda" {
 
 resource "aws_lambda_function" "example_test_function" {
   filename         = data.archive_file.lambda.output_path
-  function_name    = "${var.project}-lambda-test"
+  function_name    = "${replace(var.project, ".", "-")}-lambda-test"
   role             = aws_iam_role.example_api_role.arn
   handler          = "index.handler"
   runtime          = "nodejs10.x"
